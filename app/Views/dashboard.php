@@ -1,24 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Supir</title>
-    
-    <link rel="stylesheet" href="path/to/your/styles.css">
-    <style>
-        .card {
-            margin-left: -230px; /* Adjust as needed */
-        }
-    </style>
-</head> -->
 <body>
                 
 <!-- <div class="content-body"> -->
 
 <div class="container-fluid mt-3">
     <div class="row">
-        <div class="col-lg-3 col-sm-6">
+        <!-- Wider Boxes -->
+        <div class="col-lg-4 col-sm-6">
             <div class="card gradient-1">
                 <div class="card-body">
                     <h3 class="card-title text-white">Pemasukan</h3>
@@ -30,7 +19,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-3 col-sm-6">
+        <div class="col-lg-4 col-sm-6">
             <div class="card gradient-2">
                 <div class="card-body">
                     <h3 class="card-title text-white">Pengeluaran</h3>
@@ -42,10 +31,10 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-3 col-sm-6">
+        <div class="col-lg-4 col-sm-6">
             <div class="card gradient-3">
                 <div class="card-body">
-                    <h3 class="card-title text-white">New Customers</h3>
+                    <h3 class="card-title text-white">Saldo</h3>
                     <div class="d-inline-block">
                         <h2 class="text-white">4565</h2>
                         <p class="text-white mb-0">Jan - March 2019</p>
@@ -54,19 +43,49 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-3 col-sm-6">
-            <div class="card gradient-4">
+    </div>
+
+    <!-- New Wider Boxes -->
+    <div class="row mt-3">
+        <div class="col-lg-4 col-sm-6">
+            <div class="card gradient-5">
                 <div class="card-body">
-                    <h3 class="card-title text-white">Customer Satisfaction</h3>
+                    <h3 class="card-title text-white">Total Pemasukan</h3>
                     <div class="d-inline-block">
-                        <h2 class="text-white">99%</h2>
+                        <h2 class="text-white">Rp 12,000,000</h2>
                         <p class="text-white mb-0">Jan - March 2019</p>
                     </div>
-                    <span class="float-right display-5 opacity-5"><i class="fa fa-heart"></i></span>
+                    <span class="float-right display-5 opacity-5"><i class="fa fa-line-chart"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-sm-6">
+            <div class="card gradient-6">
+                <div class="card-body">
+                    <h3 class="card-title text-white">Total Pengeluaran</h3>
+                    <div class="d-inline-block">
+                        <h2 class="text-white">Rp 8,000,000</h2>
+                        <p class="text-white mb-0">Jan - March 2019</p>
+                    </div>
+                    <span class="float-right display-5 opacity-5"><i class="fa fa-cogs"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-sm-6">
+            <div class="card gradient-7">
+                <div class="card-body">
+                    <h3 class="card-title text-white">Total Saldo</h3>
+                    <div class="d-inline-block">
+                        <h2 class="text-white">+12%</h2>
+                        <p class="text-white mb-0">Jan - March 2019</p>
+                    </div>
+                    <span class="float-right display-5 opacity-5"><i class="fa fa-line-chart"></i></span>
                 </div>
             </div>
         </div>
     </div>
+
+
 
     <div class="row">
         <div class="col-lg-12">

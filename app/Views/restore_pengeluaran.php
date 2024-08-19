@@ -59,16 +59,7 @@
                                 Total Pengeluaran: <span id="totalHarga">0</span>
                             </div>
                             <div class="table-responsive">
-                                <div class="button-group">
-                                    <a href="<?= base_url('Home/t_pencatatan_pengeluaran') ?>">
-                                        <button class="btn btn-warning">+ Tambah</button>
-                                    </a>
-                                    <button class="btn btn-info" data-toggle="modal" data-target="#filterModal">Pilih</button>
-
-                                    <?php if($activepage === 'filter_pencatatan_pengeluaran') { ?>
-                                    <a href="<?= base_url('Home/pencatatan_pengeluaran') ?>" class="btn btn-secondary back-button">Kembali</a>
-                                    <?php }?>
-                                </div>
+                                
                                 <table class="table table-striped table-bordered zero-configuration">
                                     <thead>
                                         <tr>
@@ -97,7 +88,7 @@
                                             <td><?= $wkwk->kategori?></td>
                                             <td>
     <?php if(session()->get('id_level')==1 || session()->get('id_level')==2) { ?>
-        <button class="btn btn-success" 
+        <!-- <button class="btn btn-success" 
     data-toggle="modal" 
     data-target="#editModal" 
     data-id="<?= $wkwk->id_pengeluaran_tc ?>" 
@@ -107,11 +98,11 @@
     data-deskripsi="<?= $wkwk->deskripsi ?>" 
     data-harga="<?= $wkwk->harga ?>" 
     data-kategori="<?= $wkwk->id_kategori ?>"
->Detail</button>
+>Detail</button> -->
 
 
-        <a href="<?= base_url('Home/hapus_pengeluaran/'.$wkwk->id_pengeluaran_tc)?>">
-            <button class="btn btn-danger">Hapus</button>
+        <a href="<?= base_url('Home/hapus_restore_pengeluaran/'.$wkwk->id_pengeluaran_tc)?>">
+            <button class="btn btn-danger">Restore Data</button>
         </a>
     <?php } ?>
 </td>

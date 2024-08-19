@@ -1,138 +1,84 @@
-<div class="content-body">
-
-            <div class="row page-titles mx-0">
-                <div class="col p-md-0">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
-                        <li class="breadcrumb-item active"><a href="javascript:void(0)">Home</a></li>
-                    </ol>
-                </div>
-            </div>
-            <!-- row -->
-
-<div class="container-fluid">
-                <div class="row justify-content-center">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="form-validation">
-                                    <form class="form-valide" action="#" method="post">
-                                        <div class="form-group row">
-                                            <label class="col-lg-4 col-form-label" for="val-username">Username <span class="text-danger">*</span>
-                                            </label>
-                                            <div class="col-lg-6">
-                                                <input type="text" class="form-control" id="val-username" name="val-username" placeholder="Enter a username..">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-lg-4 col-form-label" for="val-email">Email <span class="text-danger">*</span>
-                                            </label>
-                                            <div class="col-lg-6">
-                                                <input type="text" class="form-control" id="val-email" name="val-email" placeholder="Your valid email..">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-lg-4 col-form-label" for="val-password">Password <span class="text-danger">*</span>
-                                            </label>
-                                            <div class="col-lg-6">
-                                                <input type="password" class="form-control" id="val-password" name="val-password" placeholder="Choose a safe one..">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-lg-4 col-form-label" for="val-confirm-password">Confirm Password <span class="text-danger">*</span>
-                                            </label>
-                                            <div class="col-lg-6">
-                                                <input type="password" class="form-control" id="val-confirm-password" name="val-confirm-password" placeholder="..and confirm it!">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-lg-4 col-form-label" for="val-suggestions">Suggestions <span class="text-danger">*</span>
-                                            </label>
-                                            <div class="col-lg-6">
-                                                <textarea class="form-control" id="val-suggestions" name="val-suggestions" rows="5" placeholder="What would you like to see?"></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-lg-4 col-form-label" for="val-skill">Best Skill <span class="text-danger">*</span>
-                                            </label>
-                                            <div class="col-lg-6">
-                                                <select class="form-control" id="val-skill" name="val-skill">
-                                                    <option value="">Please select</option>
-                                                    <option value="html">HTML</option>
-                                                    <option value="css">CSS</option>
-                                                    <option value="javascript">JavaScript</option>
-                                                    <option value="angular">Angular</option>
-                                                    <option value="angular">React</option>
-                                                    <option value="vuejs">Vue.js</option>
-                                                    <option value="ruby">Ruby</option>
-                                                    <option value="php">PHP</option>
-                                                    <option value="asp">ASP.NET</option>
-                                                    <option value="python">Python</option>
-                                                    <option value="mysql">MySQL</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-lg-4 col-form-label" for="val-currency">Currency <span class="text-danger">*</span>
-                                            </label>
-                                            <div class="col-lg-6">
-                                                <input type="text" class="form-control" id="val-currency" name="val-currency" placeholder="$21.60">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-lg-4 col-form-label" for="val-website">Website <span class="text-danger">*</span>
-                                            </label>
-                                            <div class="col-lg-6">
-                                                <input type="text" class="form-control" id="val-website" name="val-website" placeholder="http://example.com">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-lg-4 col-form-label" for="val-phoneus">Phone (US) <span class="text-danger">*</span>
-                                            </label>
-                                            <div class="col-lg-6">
-                                                <input type="text" class="form-control" id="val-phoneus" name="val-phoneus" placeholder="212-999-0000">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-lg-4 col-form-label" for="val-digits">Digits <span class="text-danger">*</span>
-                                            </label>
-                                            <div class="col-lg-6">
-                                                <input type="text" class="form-control" id="val-digits" name="val-digits" placeholder="5">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-lg-4 col-form-label" for="val-number">Number <span class="text-danger">*</span>
-                                            </label>
-                                            <div class="col-lg-6">
-                                                <input type="text" class="form-control" id="val-number" name="val-number" placeholder="5.0">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-lg-4 col-form-label" for="val-range">Range [1, 5] <span class="text-danger">*</span>
-                                            </label>
-                                            <div class="col-lg-6">
-                                                <input type="text" class="form-control" id="val-range" name="val-range" placeholder="4">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-lg-4 col-form-label"><a href="#">Terms &amp; Conditions</a>  <span class="text-danger">*</span>
-                                            </label>
-                                            <div class="col-lg-8">
-                                                <label class="css-control css-control-primary css-checkbox" for="val-terms">
-                                                    <input type="checkbox" class="css-control-input" id="val-terms" name="val-terms" value="1"> <span class="css-control-indicator"></span> I agree to the terms</label>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <div class="col-lg-8 ml-auto">
-                                                <button type="submit" class="btn btn-primary">Submit</button>
-                                            </div>
-                                        </div>
-                                    </form>
+<main role="main" class="main-content">
+    <div class="col-md-8 my-6" >
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title">Profile</h5>
+                <div class="row mt-5 align-items-center">
+                    <div class="col-md-3 text-center mb-5">
+                        <?php
+                             $foto_profil = ($darren->foto) ? base_url('images/img/' . $darren->foto) : base_url('images/img/user.png');
+                        ?>
+                        <img src="<?= $foto_profil ?>" class="rounded-circle" style="width: 200px; height: 200px;" alt="Foto Profile"><br><br>
+                        <form action="<?= base_url('home/editfoto')?>" method="post" enctype="multipart/form-data">
+                            <label for="foto" class="btn btn-primary px-3">Pilih Foto Profil Baru</label><br>
+                            <input class="file-input" type="file" id="foto" name="foto" accept="image/*" style="display: none;">
+                            <span id="file-name"></span> 
+                            <br>
+                            <button id="saveButton" class="btn btn-primary px-3" style="height: 40px; display: none;">Save</button>
+                        </form>
+                    </div>
+                    <div class="col-md-9">
+                    <form action="<?= base_url('home/aksi_e_profile')?>" method="POST">
+                    <input type="hidden" name="id" value="<?= $darren->id_user ?>">
+                            <div class="form-row">
+                                <div class="form-group col-md-6 offset-md-4"> 
+                                    <label for="username">Username</label>
+                                    <input type="text" id="username" class="form-control" name="username" value="<?= esc($darren->username) ?>">
+                                </div>
+                                <div class="form-group col-md-6 offset-md-4"> 
+                                    <label for="email">Email</label>
+                                    <input type="text" id="email" class="form-control" name="email" value="<?= esc($darren->email) ?>">
+                                </div>
+                                <div class="form-group col-md-6 offset-md-4"> 
+                                    <label for="status">Status</label>
+                                    <input type="text" id="status" class="form-control" value="<?= esc($darren->id_level) ?>" readonly>
+                                </div>
+                                <div class="form-group col-md-12 offset-md-4">
+                                    <button type="submit" class="btn btn-primary">Save Changes</button>
                                 </div>
                             </div>
+                        </form>
+                        <div class="form-group col-md-12 offset-md-4 mt-4">
+                        <a href="<?= base_url('home/changepassword') ?>" class="btn btn-sm btn-primary">
+    Change Password
+</a>
+
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- #/ container -->
         </div>
+    </div>
+</main>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    // Script untuk menampilkan nama file yang di-upload
+    document.getElementById('foto').onchange = function() {
+        var fileName = this.value.split('\\').pop();
+        document.getElementById('file-name').innerText = 'File : ' + fileName;
+        document.getElementById('saveButton').style.display = 'inline-block';
+    };
+
+    // Script untuk toggle password visibility
+    document.getElementById('togglePassword').addEventListener('click', function() {
+        const passwordField = document.getElementById('password');
+        const toggleButton = document.getElementById('togglePassword');
+
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            toggleButton.innerHTML = '<i class="mdi mdi-eye-off"></i>'; // Ubah ikon mata jika password terlihat
+        } else {
+            passwordField.type = 'password';
+            toggleButton.innerHTML = '<i class="mdi mdi-eye"></i>'; // Ubah ikon mata jika password tersembunyi
+        }
+    });
+
+   
+
+</script>

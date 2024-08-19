@@ -10,6 +10,13 @@ Class M_pencatatan extends Model
                         ->get()
                         ->getResult();
     }
+    public function getById($id)
+    {
+        return $this->db->table('tb_user')
+            ->where('id_user', $id)
+            ->get()
+            ->getRow();
+    }
 	public function edit($tabel, $isi, $where){
         return $this->db->table($tabel)
                         ->update($isi,$where);
@@ -20,11 +27,14 @@ Class M_pencatatan extends Model
                         ->delete($where);
 
     }
-	public function getWhere($tabel,$where){
-        return $this->db->table($tabel)
-                        ->getwhere($where)
-                        ->getRow();
+    public function getWhere($table, $where)
+    {
+        return $this->db->table($table)
+                        ->where($where)
+                        ->get()
+                        ->getRow();  // Return a single row as an object
     }
+    
     public function join($tabel, $tabel2, $on){
         return $this->db->table($tabel)
                         ->join($tabel2, $on, 'left')
@@ -375,16 +385,36 @@ public function getSetting()
 //     return $builder->get()->getResult();
 // }
 
-public function betweenjoin1($table1, $table2, $table3, $on1, $on2, $tanggalAwal, $tanggalAkhir, $status)
+// public function betweenjoin1($table1, $table2, $table3, $on1, $on2, $tanggalAwal, $tanggalAkhir, $status)
+// {
+//     $builder = $this->db->table($table1)
+//         ->join($table2, $on1)
+//         ->join($table3, $on2)
+//         ->where('tb_pencatatan_truck_crane.tanggal >=', $tanggalAwal)
+//         ->where('tb_pencatatan_truck_crane.tanggal <=', $tanggalAkhir);
+        
+//     if ($status != "") {
+//         $builder->where('tb_pencatatan_truck_crane.status', $status);
+//     }
+
+//     return $builder->get()->getResult();
+// }
+
+public function betweenjoin1($table1, $table2, $table3, $joinCondition1, $joinCondition2, $tanggalawal = null, $tanggalakhir = null, $status = null)
 {
     $builder = $this->db->table($table1)
-        ->join($table2, $on1)
-        ->join($table3, $on2)
-        ->where('tb_pencatatan_truck_crane.tanggal >=', $tanggalAwal)
-        ->where('tb_pencatatan_truck_crane.tanggal <=', $tanggalAkhir);
-        
-    if ($status != "") {
-        $builder->where('tb_pencatatan_truck_crane.status', $status);
+        ->join($table2, $joinCondition1)
+        ->join($table3, $joinCondition2);
+
+    // Jika tanggal awal dan tanggal akhir diberikan, lakukan filtering
+    if ($tanggalawal && $tanggalakhir) {
+        $builder->where('tanggal >=', $tanggalawal)
+                ->where('tanggal <=', $tanggalakhir);
+    }
+
+    // Jika status diberikan, lakukan filtering berdasarkan status
+    if ($status) {
+        $builder->where('status', $status);
     }
 
     return $builder->get()->getResult();
@@ -417,15 +447,36 @@ public function betweenjoin1pdf($table1, $table2, $table3, $on1, $on2, $tanggalA
 //         ->getResult();
 // }
 
-public function betweenjoin2($table1, $table2, $table3, $table4, $on1, $on2, $on3, $tanggalAwal, $tanggalAkhir, $kategori = null)
+// public function betweenjoin2($table1, $table2, $table3, $table4, $on1, $on2, $on3, $tanggalAwal, $tanggalAkhir, $kategori = null)
+// {
+//     $builder = $this->db->table($table1)
+//         ->join($table2, $on1)
+//         ->join($table3, $on2)
+//         ->join($table4, $on3)
+//         ->where('tb_pencatatan_pengeluaran_tc.tanggal >=', $tanggalAwal)
+//         ->where('tb_pencatatan_pengeluaran_tc.tanggal <=', $tanggalAkhir);
+
+//     if ($kategori) {
+//         $builder->where('tb_pencatatan_pengeluaran_tc.id_kategori', $kategori);
+//     }
+
+//     return $builder->get()->getResult();
+// }
+
+public function betweenjoin2($table1, $table2, $table3, $table4, $joinCondition1, $joinCondition2, $joinCondition3, $tanggalAwal = null, $tanggalAkhir = null, $kategori = null)
 {
     $builder = $this->db->table($table1)
-        ->join($table2, $on1)
-        ->join($table3, $on2)
-        ->join($table4, $on3)
-        ->where('tb_pencatatan_pengeluaran_tc.tanggal >=', $tanggalAwal)
-        ->where('tb_pencatatan_pengeluaran_tc.tanggal <=', $tanggalAkhir);
+        ->join($table2, $joinCondition1)
+        ->join($table3, $joinCondition2)
+        ->join($table4, $joinCondition3);
 
+    // Jika tanggal awal dan tanggal akhir diberikan, lakukan filtering
+    if ($tanggalAwal && $tanggalAkhir) {
+        $builder->where('tb_pencatatan_pengeluaran_tc.tanggal >=', $tanggalAwal)
+                ->where('tb_pencatatan_pengeluaran_tc.tanggal <=', $tanggalAkhir);
+    }
+
+    // Jika kategori diberikan, lakukan filtering berdasarkan kategori
     if ($kategori) {
         $builder->where('tb_pencatatan_pengeluaran_tc.id_kategori', $kategori);
     }
@@ -458,4 +509,122 @@ public function tampil4($tabel){
                     ->get()
                     ->getResult();
 }
+
+public function get_filtered_pemasukan($tanggalawal, $tanggalakhir, $status)
+{
+    $this->db->select('*');
+    $this->db->from('tb_pencatatan_truck_crane'); // Replace with your actual table name
+
+    // Apply date range filter if provided
+    if (!empty($tanggalawal) && !empty($tanggalakhir)) {
+        $this->db->where('tanggal >=', $tanggalawal);
+        $this->db->where('tanggal <=', $tanggalakhir);
+    }
+
+    // Apply status filter if provided
+    if (!empty($status)) {
+        $this->db->where('status', $status);
+    }
+
+    $query = $this->db->get();
+    return $query->result();
+}
+
+public function get_filtered_pengeluaran($tanggalawal, $tanggalakhir, $kategori)
+{
+    $this->db->select('*');
+    $this->db->from('tb_pencatatan_pengeluaran_tc'); // Replace with your actual table name
+
+    // Apply date range filter if provided
+    if (!empty($tanggalawal) && !empty($tanggalakhir)) {
+        $this->db->where('tanggal >=', $tanggalawal);
+        $this->db->where('tanggal <=', $tanggalakhir);
+    }
+
+    // Apply category filter if provided
+    if (!empty($kategori)) {
+        $this->db->where('id_kategori', $kategori);
+    }
+
+    $query = $this->db->get();
+    return $query->result();
+}
+
+public function join3tblPencatatan($tabel1, $tabel2, $tabel3, $on1, $on2, $orderByColumn = null, $orderDirection = 'ASC')
+    {
+        $builder = $this->db->table($tabel1)
+            ->join($tabel2, $on1, 'inner')
+            ->join($tabel3, $on2, 'inner')
+            ->where("$tabel1.delete_at", null); // Menambahkan kondisi where deleted_at is null
+
+        if ($orderByColumn) {
+            $builder->orderBy($orderByColumn, $orderDirection);
+        }
+
+        return $builder->get()->getResult();
+    }
+
+    public function join3tblPencatatan2($tabel1, $tabel2, $tabel3, $on1, $on2, $orderByColumn = null, $orderDirection = 'ASC')
+    {
+        $builder = $this->db->table($tabel1)
+            ->join($tabel2, $on1, 'inner')
+            ->join($tabel3, $on2, 'inner')
+            ->where("$tabel1.delete_at IS NOT NULL"); // Menambahkan kondisi where deleted_at is null
+
+        if ($orderByColumn) {
+            $builder->orderBy($orderByColumn, $orderDirection);
+        }
+
+        return $builder->get()->getResult();
+    }
+
+    public function join4tblPengeluaran($tabel1, $tabel2, $tabel3, $tabel4, $on1, $on2, $on3, $orderByColumn = null, $orderDirection = 'ASC')
+    {
+        $builder = $this->db->table($tabel1)
+            ->join($tabel2, $on1, 'inner')
+            ->join($tabel3, $on2, 'inner')
+            ->join($tabel4, $on3, 'inner')
+            ->where("$tabel1.delete_at", null); // Menambahkan kondisi where deleted_at is null
+
+        if ($orderByColumn) {
+            $builder->orderBy($orderByColumn, $orderDirection);
+        }
+
+        return $builder->get()->getResult();
+    }
+
+    public function join4tblPengeluaran2($tabel1, $tabel2, $tabel3, $tabel4, $on1, $on2, $on3, $orderByColumn = null, $orderDirection = 'ASC')
+    {
+        $builder = $this->db->table($tabel1)
+            ->join($tabel2, $on1, 'inner')
+            ->join($tabel3, $on2, 'inner')
+            ->join($tabel4, $on3, 'inner')
+            ->where("$tabel1.delete_at IS NOT NULL"); // Menambahkan kondisi where deleted_at is null
+
+        if ($orderByColumn) {
+            $builder->orderBy($orderByColumn, $orderDirection);
+        }
+
+        return $builder->get()->getResult();
+    }
+
+    public function saveToBackup($table, $data)
+    {
+        $this->db->table($table)->insert($data);
+    }
+
+    public function getPassword($userId)
+    {
+        return $this->db->table('tb_user')
+            ->select('password')
+            ->where('id_user', $userId)
+            ->get()
+            ->getRow()
+            ->password;
+    }
+
+    public function getWhere1($table, $where)
+    {
+        return $this->db->table($table)->where($where)->get();
+    }
 }

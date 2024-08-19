@@ -212,31 +212,34 @@
                             </div>
                         </li> -->
                         <li class="icons dropdown">
-                            <div class="user-img c-pointer position-relative"   data-toggle="dropdown">
-                                <span class="activity active"></span>
-                                <img src="images/user/1.png" height="40" width="40" alt="">
-                            </div>
-                            <div class="drop-down dropdown-profile animated fadeIn dropdown-menu">
-                                <div class="dropdown-content-body">
-                                    <ul>
-                                        <li>
-                                            <a href="app-profile.html"><i class="icon-user"></i> <span>Profile</span></a>
-                                        </li>
-                                        <!-- <li>
-                                            <a href="javascript:void()">
-                                                <i class="icon-envelope-open"></i> <span>Inbox</span> <div class="badge gradient-3 badge-pill gradient-1">3</div>
-                                            </a>
-                                        </li> -->
-                                        
-                                        <hr class="my-2">
-                                        <!-- <li>
-                                            <a href="page-lock.html"><i class="icon-lock"></i> <span>Lock Screen</span></a>
-                                        </li> -->
-                                        <li><a href="<?=base_url('home/logout')?>"><i class="icon-key"></i> <span>Logout</span></a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </li>
+    <div class="user-img c-pointer position-relative" data-toggle="dropdown">
+        <!-- Existing content for user image -->
+    </div>
+    <button class="btn btn-icon dropdown-toggle" type="button" data-toggle="dropdown">
+        <i class="icon-user"></i>
+    </button>
+    <div class="drop-down dropdown-profile animated fadeIn dropdown-menu">
+        <div class="dropdown-content-body">
+            <ul>
+                <li>
+                    <a href="<?=base_url('home/profile')?>"><i class="icon-user"></i> <span>Profile</span></a>
+                </li>
+                <!-- <li>
+                    <a href="javascript:void()">
+                        <i class="icon-envelope-open"></i> <span>Inbox</span> <div class="badge gradient-3 badge-pill gradient-1">3</div>
+                    </a>
+                </li> -->
+                
+                <hr class="my-2">
+                <!-- <li>
+                    <a href="page-lock.html"><i class="icon-lock"></i> <span>Lock Screen</span></a>
+                </li> -->
+                <li><a href="<?=base_url('home/logout')?>"><i class="icon-key"></i> <span>Logout</span></a></li>
+            </ul>
+        </div>
+    </div>
+</li>
+
                     </ul>
                 </div>
             </div>
@@ -312,7 +315,42 @@
 </li>
 <li>
     <a href="<?=base_url('home/laporan')?>" aria-expanded="false">
-        <i class="icon-doc menu-icon"></i> <span class="nav-text">Laporan</span>
+        <i class="icon-doc menu-icon"></i> <span class="nav-text">Laporan Pemasukan</span>
+    </a>
+</li>
+<li>
+    <a href="<?=base_url('home/laporan_pengeluaran')?>" aria-expanded="false">
+        <i class="icon-doc menu-icon"></i> <span class="nav-text">Laporan Pengeluaran</span>
+    </a>
+</li>
+<li>
+
+<li>
+    <a href="<?=base_url('home/restore_edit_pencatatan')?>" aria-expanded="false">
+        <i class="icon-doc menu-icon"></i> <span class="nav-text">Restore Edit Pemasukan</span>
+    </a>
+</li>
+
+<li>
+    <a href="<?=base_url('home/restore_pencatatan')?>" aria-expanded="false">
+        <i class="icon-doc menu-icon"></i> <span class="nav-text">Restore Hapus Pemasukan</span>
+    </a>
+</li>
+
+<li>
+    <a href="<?=base_url('home/restore_pengeluaran')?>" aria-expanded="false">
+        <i class="icon-doc menu-icon"></i> <span class="nav-text">Restore Hapus Pengeluaran</span>
+    </a>
+</li>
+
+<li>
+    <a href="<?=base_url('home/restore_edit_pengeluaran')?>" aria-expanded="false">
+        <i class="icon-doc menu-icon"></i> <span class="nav-text">Restore Edit Pengeluaran</span>
+    </a>
+</li>
+
+    <a href="<?=base_url('home/activity')?>" aria-expanded="false">
+        <i class="icon-doc menu-icon"></i> <span class="nav-text">Log Activity</span>
     </a>
 </li>
 <?php if(session()->get('id_level')=="1" ){ ?>

@@ -9,6 +9,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+date_default_timezone_set('Asia/Jakarta');
 
 class Home extends BaseController
 {
@@ -130,22 +131,6 @@ class Home extends BaseController
 		
 	}
 
-	// public function setting()
-	// {
-	// 	if (session()->get('id_level')>0) {
-	// 	$model = new M_pencatatan();
-	// 	$where=array('id_user'=>session()->get('id_user'));
-    //     $data['erwin']=$model->tampil('tb_setting');
-	// 	echo view('header');
-	// 	echo view('menu',$data);
-	// 	echo view('setting',$data);
-	// 	echo view('footer');
-	
-	// 	}else{
-	// 		return redirect()->to('home/login');
-	// 	}
-	// }
-
 	public function setting()
 	{
 		if(session()->get('id_level') == '1'){
@@ -227,9 +212,17 @@ class Home extends BaseController
 		$where = array('id_setting' => 1);
 		$data['setting'] = $model->getWhere('tb_setting',$where);
         $where = ['id_user' => session()->get('id_user')];
-        $data['erwin'] = $model->joinThreePencatatan('tb_pencatatan_truck_crane', 'tb_truck_crane', 'tb_supir', 
-		'tb_pencatatan_truck_crane.id_truck_crane = tb_truck_crane.id_truck_crane', 
-		'tb_pencatatan_truck_crane.id_supir = tb_supir.id_supir', $where);
+        // $data['erwin'] = $model->joinThreePencatatan('tb_pencatatan_truck_crane', 'tb_truck_crane', 'tb_supir', 
+		// 'tb_pencatatan_truck_crane.id_truck_crane = tb_truck_crane.id_truck_crane', 
+		// 'tb_pencatatan_truck_crane.id_supir = tb_supir.id_supir', $where);
+
+        $data['erwin'] = $model->join3tblPencatatan(
+            'tb_pencatatan_truck_crane', 'tb_truck_crane', 'tb_supir', 
+		    'tb_pencatatan_truck_crane.id_truck_crane = tb_truck_crane.id_truck_crane', 
+		    'tb_pencatatan_truck_crane.id_supir = tb_supir.id_supir',
+            'no_invoice',
+            'DESC'
+        );
 
         // Fetch data for dropdowns
         $data['truck_cranes'] = $model->getAll('tb_truck_crane');
@@ -245,97 +238,65 @@ class Home extends BaseController
     }
 }
 
+public function restore_pencatatan()
+{
+    if (session()->get('id_level') > 0) {
+        $model = new M_pencatatan();
+		$this->log_activity('User Membuka Restore Pencatatan Pemasukan');
+		$where = array('id_setting' => 1);
+		$data['setting'] = $model->getWhere('tb_setting',$where);
+        $where = ['id_user' => session()->get('id_user')];
+        // $data['erwin'] = $model->joinThreePencatatan('tb_pencatatan_truck_crane', 'tb_truck_crane', 'tb_supir', 
+		// 'tb_pencatatan_truck_crane.id_truck_crane = tb_truck_crane.id_truck_crane', 
+		// 'tb_pencatatan_truck_crane.id_supir = tb_supir.id_supir', $where);
 
-	// public function filter_pencatatan()
-    // {
-    //     if (session()->get('id_level') > 0) {
-    //         $model = new M_pencatatan();
-    //         $awal = $this->request->getPost('awal2');
-    //         $akhir = $this->request->getPost('akhir2');
+        $data['erwin'] = $model->join3tblPencatatan2(
+            'tb_pencatatan_truck_crane', 'tb_truck_crane', 'tb_supir', 
+		    'tb_pencatatan_truck_crane.id_truck_crane = tb_truck_crane.id_truck_crane', 
+		    'tb_pencatatan_truck_crane.id_supir = tb_supir.id_supir',
+            'no_invoice',
+            'DESC'
+        );
 
-    //         if (empty($akhir)) {
-    //             $akhir = date('Y-m-d');
-    //         }
+        // Fetch data for dropdowns
+        $data['truck_cranes'] = $model->getAll('tb_truck_crane');
+        $data['supirs'] = $model->getAll('tb_supir');
+        $data['pelanggans'] = $model->getAll('tb_pencatatan_truck_crane');
 
-    //         if (strtotime($akhir) < strtotime($awal)) {
-    //             return redirect()->back()->with('error', 'Tanggal akhir tidak boleh sebelum tanggal awal.');
-    //         }
+        echo view('header', $data);
+        echo view('menu', $data);
+        echo view('restore_pencatatan', $data);
+        echo view('footer');
+    } else {
+        return redirect()->to('home/login');
+    }
+}
 
-    //         $data['erwin'] = $model->filterByDateRange(
-    //             'tb_pencatatan_truck_crane',
-    //             'tb_truck_crane',
-    //             'tb_supir',
-    //             'tb_pencatatan_truck_crane.id_truck_crane = tb_truck_crane.id_truck_crane',
-    //             'tb_pencatatan_truck_crane.id_supir = tb_supir.id_supir',
-    //             $awal,
-    //             $akhir
-    //         );
+public function restore_edit_pencatatan()
+{
+    if (session()->get('id_level') > 0) {
+        $model = new M_pencatatan();
+		$this->log_activity('User Membuka Restore Edit Pencatatan Pemasukan');
+		$where = array('id_setting' => 1);
+		$data['setting'] = $model->getWhere('tb_setting',$where);
+        $where = ['id_user' => session()->get('id_user')];
+        $data['erwin'] = $model->joinThreePencatatan('tb_pencatatan_truck_crane_backup', 'tb_truck_crane', 'tb_supir', 
+		'tb_pencatatan_truck_crane_backup.id_truck_crane = tb_truck_crane.id_truck_crane', 
+		'tb_pencatatan_truck_crane_backup.id_supir = tb_supir.id_supir', $where);
 
-    //         echo view('header');
-    //         echo view('menu', $data);
-    //         echo view('pencatatan', $data);
-    //         echo view('footer');
-    //     } else {
-    //         return redirect()->to('home/login');
-    //     }
-    // }
+        // Fetch data for dropdowns
+        $data['truck_cranes'] = $model->getAll('tb_truck_crane');
+        $data['supirs'] = $model->getAll('tb_supir');
+        $data['pelanggans'] = $model->getAll('tb_pencatatan_truck_crane');
 
-// 	public function filter_pencatatan_by_status()
-// {
-//     if (session()->get('id_level') > 0) {
-//         $status = $this->request->getPost('status');
-//         $truck_crane = $this->request->getPost('truck_crane');
-//         $supir = $this->request->getPost('supir');
-//         $pelanggan = $this->request->getPost('pelanggan');
-//         $awal = $this->request->getPost('awal2');
-//         $akhir = $this->request->getPost('akhir2');
-
-//         // Debugging
-//         var_dump($status, $truck_crane, $supir, $pelanggan, $awal, $akhir);
-
-//         // Lanjutkan dengan logika filter
-//     } else {
-//         return redirect()->to('home/login');
-//     }
-// }
-
-    // public function filter_pencatatan_by_status()
-    // {
-    //     if (session()->get('id_level') > 0) {
-    //         $model = new M_pencatatan();
-    //         $status = $this->request->getPost('status');
-    //         $awal = $this->request->getPost('awal2');
-    //         $akhir = $this->request->getPost('akhir2');
-
-    //         if (empty($akhir)) {
-    //             $akhir = date('Y-m-d');
-    //         }
-
-    //         if (strtotime($akhir) < strtotime($awal)) {
-    //             return redirect()->back()->with('error', 'Tanggal akhir tidak boleh sebelum tanggal awal.');
-    //         }
-
-    //         $data['erwin'] = $model->filterByStatusAndDateRange(
-    //             'tb_pencatatan_truck_crane',
-    //             'tb_truck_crane',
-    //             'tb_supir',
-    //             'tb_pencatatan_truck_crane.id_truck_crane = tb_truck_crane.id_truck_crane',
-    //             'tb_pencatatan_truck_crane.id_supir = tb_supir.id_supir',
-    //             $status,
-    //             $awal,
-    //             $akhir
-    //         );
-
-    //         // echo view('header');
-    //         // echo view('menu', $data);
-    //         // echo view('pencatatan', $data);
-    //         // echo view('footer');
-
-	// 		print_r($data);
-    //     } else {
-    //         return redirect()->to('home/login');
-    //     }
-    // }
+        echo view('header', $data);
+        echo view('menu', $data);
+        echo view('restore_edit_pencatatan', $data);
+        echo view('footer');
+    } else {
+        return redirect()->to('home/login');
+    }
+}
 
 	public function filter_pencatatan_by_status()
 {
@@ -391,44 +352,7 @@ class Home extends BaseController
 	// print_r($pelanggan_id);
 }
 
-// public function aksi_e_pencatatan()
-// 	{
-// 		$model = new M_pencatatan();
-// 		$a = $this->request->getPost('truck_crane');
-// 		$b = $this->request->getPost('supir');
-// 		$c = $this->request->getPost('pelanggan');
-// 		$d = $this->request->getPost('pekerjaan');
-// 		$e = $this->request->getPost('lokasi');
-// 		$f = $this->request->getPost('tanggal');
-// 		$g = $this->request->getPost('total_jam');
-// 		$h = $this->request->getPost('harga');
-// 		$i = $this->request->getPost('status');
-// 		$j = $this->request->getPost('no_invoice');
-// 		$id = $this->request->getPost('id');
-		
-// 		$where = array('id_pencatatan'=>$id);
-
-// 		$isi = array(
-
-// 					'id_truck_crane' => $a,
-// 					'id_supir' => $b,
-// 					'pelanggan' => $c,
-// 					'pekerjaan' => $d,
-// 					'lokasi' => $e,
-// 					'tanggal' => $f,
-// 					'total_jam' => $g,
-// 					'harga' => $h,
-// 					'status' => $i,
-// 					'no_invoice' => $j
-// 		);
-
-// 		$model->edit('tb_pencatatan_truck_crane', $isi, $where);
-// 		//  print_r($isi);
-// 		return redirect()->to('home/pencatatan');
-
-// 	}
-
-	public function aksi_e_pencatatan()
+    public function aksi_e_pencatatan()
 	{
 		$model = new M_pencatatan();
 
@@ -445,8 +369,45 @@ class Home extends BaseController
 		$i = $this->request->getPost('status');
 		$j = $this->request->getPost('no_invoice');
 		$id_pencatatan = $this->request->getPost('id_pencatatan');
-		
+		$id_user = session()->get('id_user');
 		$where = array('id_pencatatan'=>$id_pencatatan);
+
+
+        $oldData = $model->getWhere('tb_pencatatan_truck_crane', ['id_pencatatan' => $id_pencatatan]);
+
+        // Simpan data lama ke tabel backup
+        if ($oldData) {
+            $backupData = [
+                'id_pencatatan' => $oldData->id_pencatatan,  // integer
+                'id_truck_crane' => $oldData->id_truck_crane,  // integer
+                'id_supir' => $oldData->id_supir,             // integer
+                'pelanggan' => $oldData->pelanggan,     // integer
+                'pekerjaan' => $oldData->pekerjaan, // integer
+                'lokasi' => $oldData->lokasi,               // enum
+                'tanggal' => $oldData->tanggal,                 // varchar(255)
+                'total_jam' => $oldData->total_jam,
+                'harga' => $oldData->harga,
+                'status' => $oldData->status,
+                'no_invoice' => $oldData->no_invoice,                    // integer
+                'create_by' => $oldData->create_by,         // integer
+                'update_by' => $oldData->update_by,         // integer
+                'create_at' => $oldData->create_at,         // datetime
+                'update_at' => $oldData->update_at,         // datetime
+                'backup_at' => date('Y-m-d H:i:s'),         // datetime (current time)
+                'backup_by' => $id_user,                   // integer (user who made the backup)
+                // 'kode_pemesanan' => $oldData->kode_pemesanan,
+            ];
+
+            // Debug: cek hasil insert ke tabel backup
+            if ($model->saveToBackup('tb_pencatatan_truck_crane_backup', $backupData)) {
+                echo "Data backup berhasil disimpan!";
+            } else {
+                echo "Gagal menyimpan data ke backup.";
+            }
+        } else {
+            echo "Data lama tidak ditemukan.";
+        }
+
 
 		$isi = array(
 
@@ -468,114 +429,71 @@ class Home extends BaseController
 
 	}
 
+    public function restore_data_edit_pencatatan($backup_id)
+{
+    $model = new M_pencatatan();
+
+    // Ambil data backup berdasarkan ID
+    $backupData = $model->db->table('tb_pencatatan_truck_crane_backup')->where('id_pencatatan', $backup_id)->get()->getRow();
+
+    if ($backupData) {
+        // Update data di tabel pemesanan dengan data backup
+        $data = [
+            'id_truck_crane' => $backupData->id_truck_crane,
+            'id_supir' => $backupData->id_supir,
+            'pelanggan' => $backupData->pelanggan,
+            'pekerjaan' => $backupData->pekerjaan,
+            'lokasi' => $backupData->lokasi,
+            'tanggal' => $backupData->tanggal,
+            'total_jam' => $backupData->total_jam,
+            'harga' => $backupData->harga,
+            'status' => $backupData->status,
+            'no_invoice' => $backupData->no_invoice,
+            'update_by' => $backupData->backup_by,
+            'update_at' => $backupData->backup_at,
+        ];
+        
+        // Update tabel utama dengan data dari backup
+        $model->db->table('tb_pencatatan_truck_crane')->where('id_pencatatan', $backup_id)->update($data);
+        
+        // Hapus data backup setelah restore
+        $model->db->table('tb_pencatatan_truck_crane_backup')->where('id_pencatatan', $backup_id)->delete();
+
+        // Log aktivitas restore
+        $this->log_activity('User Restore Data Pencatatan Pemasukan');
+
+        return redirect()->to('home/pencatatan')->with('message', 'Data berhasil dipulihkan dari backup.');
+    }
+
+    return redirect()->to('home/pencatatan')->with('error', 'Gagal memulihkan data.');
+}
+
+
 	public function hapus_pencatatan($id){
 		$model = new M_pencatatan();
 		$this->log_activity('User melakukan Hapus Data Pencatatan Pemasukan');
 		$where = array('id_pencatatan'=>$id);
-		$model->hapus('tb_pencatatan_truck_crane',$where);
+        $isi = array(
+
+            'delete_at' => date('Y-m-d H:i:s'),
+);
+		$model->edit('tb_pencatatan_truck_crane',$isi,$where);
 		
 		return redirect()->to('Home/pencatatan');
 	}
 
-	// public function filter_pencatatan()
-    // {
-    //     if (session()->get('id_level') > 0) {
-    //         $model = new M_pencatatan();
-    //         $awal = $this->request->getPost('awal2');
-    //         $akhir = $this->request->getPost('akhir2');
-            
-    //         // Jika tanggal akhir tidak diisi, set ke tanggal saat ini
-    //         if (empty($akhir)) {
-    //             $akhir = date('Y-m-d');
-    //         }
-            
-    //         // Validasi tanggal
-    //         if (strtotime($akhir) < strtotime($awal)) {
-    //             return redirect()->back()->with('error', 'Tanggal akhir tidak boleh sebelum tanggal awal.');
-    //         }
+    public function hapus_restore_pencatatan($id){
+		$model = new M_pencatatan();
+		$this->log_activity('User melakukan Hapus Data Pencatatan Pemasukan');
+		$where = array('id_pencatatan'=>$id);
+        $isi = array(
 
-    //         $data['erwin'] = $model->cari4(
-    //             'tb_pencatatan_truck_crane',
-    //             'tb_truck_crane',
-    //             'tb_supir',
-    //             'tb_pencatatan_truck_crane.id_truck_crane = tb_truck_crane.id_truck_crane',
-    //             'tb_pencatatan_truck_crane.id_supir = tb_supir.id_supir',
-    //             $awal,
-    //             $akhir
-    //         );
-
-    //         echo view('header');
-    //         echo view('menu', $data);
-    //         echo view('pencatatan', $data);
-    //         echo view('footer');
-    //     } else {
-    //         return redirect()->to('home/login');
-    //     }
-    // }
-
-	// public function filter_pencatatan_by_status()
-    // {
-    //     if (session()->get('id_level') > 0) {
-    //         $model = new M_pencatatan();
-    //         $status = $this->request->getPost('status');
-
-    //         $data['erwin'] = $model->filterByStatus(
-    //             'tb_pencatatan_truck_crane',
-    //             'tb_truck_crane',
-    //             'tb_supir',
-    //             'tb_pencatatan_truck_crane.id_truck_crane = tb_truck_crane.id_truck_crane',
-    //             'tb_pencatatan_truck_crane.id_supir = tb_supir.id_supir',
-    //             $status
-    //         );
-
-    //         echo view('header');
-    //         echo view('menu', $data);
-    //         echo view('pencatatan', $data);
-    //         echo view('footer');
-    //     } else {
-    //         return redirect()->to('home/login');
-    //     }
-    // }
-
-// 	public function filter_pencatatan_combined()
-// {
-//     if (session()->get('id_level') > 0) {
-//         $model = new M_pencatatan();
-//         $status = $this->request->getPost('status');
-//         $awal = $this->request->getPost('awal2');
-//         $akhir = $this->request->getPost('akhir2');
-
-//         // Jika tanggal akhir tidak diisi, set ke tanggal saat ini
-//         if (empty($akhir)) {
-//             $akhir = date('Y-m-d');
-//         }
-
-//         // Validasi tanggal
-//         if (strtotime($akhir) < strtotime($awal)) {
-//             return redirect()->back()->with('error', 'Tanggal akhir tidak boleh sebelum tanggal awal.');
-//         }
-
-//         // Filter berdasarkan status dan tanggal
-//         $data['erwin'] = $model->filterByDateAndStatus(
-//             'tb_pencatatan_truck_crane',
-//             'tb_truck_crane',
-//             'tb_supir',
-//             'tb_pencatatan_truck_crane.id_truck_crane = tb_truck_crane.id_truck_crane',
-//             'tb_pencatatan_truck_crane.id_supir = tb_supir.id_supir',
-//             $awal,
-//             $akhir,
-//             $status
-//         );
-
-//         echo view('header');
-//         echo view('menu', $data);
-//         echo view('pencatatan', $data);
-//         echo view('footer');
-//     } else {
-//         return redirect()->to('home/login');
-//     }
-// }
-
+            'delete_at' => NULL,
+);
+		$model->edit('tb_pencatatan_truck_crane', $isi,$where);
+		
+		return redirect()->to('Home/pencatatan');
+	}
 
 	public function t_pencatatan()
 	{
@@ -647,10 +565,20 @@ class Home extends BaseController
 		$data['setting'] = $model->getWhere('tb_setting',$where);
 		$where=array('id_user'=>session()->get('id_user'));
 		$this->log_activity('User membuka Pencatatan Pengeluaran');
-        $data['erwin']=$model->joinFourPengeluaran('tb_pencatatan_pengeluaran_tc','tb_truck_crane','tb_supir','tb_kategori',
+        // $data['erwin']=$model->joinFourPengeluaran('tb_pencatatan_pengeluaran_tc','tb_truck_crane','tb_supir','tb_kategori',
+		// 'tb_pencatatan_pengeluaran_tc.id_truck_crane = tb_truck_crane.id_truck_crane',
+		// 'tb_pencatatan_pengeluaran_tc.id_supir = tb_supir.id_supir',
+		// 'tb_pencatatan_pengeluaran_tc.id_kategori = tb_kategori.id_kategori', $where);
+
+        $data['erwin'] = $model->join4tblPengeluaran(
+            'tb_pencatatan_pengeluaran_tc','tb_truck_crane','tb_supir','tb_kategori',
 		'tb_pencatatan_pengeluaran_tc.id_truck_crane = tb_truck_crane.id_truck_crane',
 		'tb_pencatatan_pengeluaran_tc.id_supir = tb_supir.id_supir',
-		'tb_pencatatan_pengeluaran_tc.id_kategori = tb_kategori.id_kategori', $where);
+		'tb_pencatatan_pengeluaran_tc.id_kategori = tb_kategori.id_kategori',
+           'id_pengeluaran_tc',
+            'DESC' 
+
+        );
 
 		$data['truck_cranes'] = $model->getAll('tb_truck_crane');
         $data['supirs'] = $model->getAll('tb_supir');
@@ -664,6 +592,71 @@ class Home extends BaseController
 		}else{
 			return redirect()->to('home/login');
 		}
+	}
+
+    public function restore_pengeluaran()
+	{
+		if (session()->get('id_level')>0) {
+		$model = new M_pencatatan();
+		$where = array('id_setting' => 1);
+		$data['setting'] = $model->getWhere('tb_setting',$where);
+		$where=array('id_user'=>session()->get('id_user'));
+		$this->log_activity('User membuka Pencatatan Pengeluaran');
+        // $data['erwin']=$model->joinFourPengeluaran('tb_pencatatan_pengeluaran_tc','tb_truck_crane','tb_supir','tb_kategori',
+		// 'tb_pencatatan_pengeluaran_tc.id_truck_crane = tb_truck_crane.id_truck_crane',
+		// 'tb_pencatatan_pengeluaran_tc.id_supir = tb_supir.id_supir',
+		// 'tb_pencatatan_pengeluaran_tc.id_kategori = tb_kategori.id_kategori', $where);
+
+        $data['erwin'] = $model->join4tblPengeluaran2(
+            'tb_pencatatan_pengeluaran_tc','tb_truck_crane','tb_supir','tb_kategori',
+		'tb_pencatatan_pengeluaran_tc.id_truck_crane = tb_truck_crane.id_truck_crane',
+		'tb_pencatatan_pengeluaran_tc.id_supir = tb_supir.id_supir',
+		'tb_pencatatan_pengeluaran_tc.id_kategori = tb_kategori.id_kategori',
+           'id_pengeluaran_tc',
+            'DESC' 
+
+        );
+
+		$data['truck_cranes'] = $model->getAll('tb_truck_crane');
+        $data['supirs'] = $model->getAll('tb_supir');
+        $data['kategoris'] = $model->getAll('tb_kategori');
+
+		echo view('header',$data);
+		echo view('menu',$data);
+		echo view('restore_pengeluaran',$data);
+		echo view('footer');
+	
+		}else{
+			return redirect()->to('home/login');
+		}
+	}
+
+    public function hapus_pengeluaran($id){
+		$model = new M_pencatatan();
+		$this->log_activity('User melakukan Penghapusan Data Pencatatan Pengeluaran');
+		$where = array('id_pengeluaran_tc'=>$id);
+        $isi = array(
+
+            'delete_at' => date('Y-m-d H:i:s'),
+);
+
+		$model->hapus('tb_pencatatan_pengeluaran_tc',$where);
+		
+		return redirect()->to('Home/pencatatan_pengeluaran');
+	}
+
+
+    public function hapus_restore_pengeluaran($id){
+		$model = new M_pencatatan();
+		$this->log_activity('User melakukan Hapus Restore Data Pencatatan Pengeluaran');
+		$where = array('id_pengeluaran_tc'=>$id);
+        $isi = array(
+
+            'delete_at' => NULL,
+);
+		$model->edit('tb_pencatatan_pengeluaran_tc', $isi,$where);
+		
+		return redirect()->to('Home/pencatatan_pengeluaran');
 	}
 
 	public function filter_pencatatan_pengeluaran()
@@ -773,10 +766,32 @@ class Home extends BaseController
 
 	}
 
-	public function aksi_e_pengeluaran()
+	// public function aksi_e_pengeluaran()
+// {
+//     $model = new M_pencatatan();
+//     $this->log_activity('User melakukan Pengeditan Data Pencatatan Pengeluaran');
+
+//     $data = [
+//         'id_supir' => $this->request->getPost('supir'),
+//         'id_truck_crane' => $this->request->getPost('truck_crane'),
+//         'tanggal' => $this->request->getPost('tanggal'),
+//         'deskripsi' => $this->request->getPost('deskripsi'),
+//         'harga' => $this->request->getPost('harga'),
+//         'id_kategori' => $this->request->getPost('kategori'),
+//     ];
+//     $id_pengeluaran_tc = $this->request->getPost('id_pengeluaran_tc');
+
+//     $model->edit('tb_pencatatan_pengeluaran_tc', $data, ['id_pengeluaran_tc' => $id_pengeluaran_tc]);
+
+//     return redirect()->to('home/pencatatan_pengeluaran');
+// }
+
+
+public function aksi_e_pengeluaran()
 	{
 		$model = new M_pencatatan();
-		$this->log_activity('User melakukan Pengeditan Data Pencatatan Pengeluaran');
+
+		$this->log_activity('User melakukan Edit Pencatatan Pengeluaran');
 
 		$a = $this->request->getPost('supir');
 		$b = $this->request->getPost('truck_crane');
@@ -804,14 +819,8 @@ class Home extends BaseController
 
 	}
 
-	public function hapus_pengeluaran($id){
-		$model = new M_pencatatan();
-		$this->log_activity('User melaukan Penghapusan Data Pencatatan Pengeluaran');
-		$where = array('id_pengeluaran_tc'=>$id);
-		$model->hapus('tb_pencatatan_pengeluaran_tc',$where);
-		
-		return redirect()->to('Home/pencatatan_pengeluaran');
-	}
+
+	
 
 	public function supir()
 	{
@@ -1150,23 +1159,128 @@ public function hapus_user($id){
 }
 
 public function profile()
-	{
-		if (session()->get('id_level')>0) {
-		$model = new M_pencatatan();
-		$this->log_activity('User membuka view Profile');
-		$where = array('id_setting' => 1);
+    {
+        if (session()->get('id_level') > 0) {
+            $model = new M_pencatatan();
+            
+            $this->log_activity('Masuk ke profile');
+            $where = array('id_user' => session()->get('id_user'));
+            $data['darren'] = $model->getwhere('tb_user', $where);
+            $where = array('id_setting' => 1);
 		$data['setting'] = $model->getWhere('tb_setting',$where);
-		$where=array('id_user'=>session()->get('id_user'));
-        $data['erwin']=$model->tampil('tb_user');
-		echo view('header',$data);
-		echo view('menu',$data);
-		echo view('profile',$data);
-		echo view('footer');
-	
-		}else{
-			return redirect()->to('home/login');
-		}
-	}
+
+            echo view('header', $data);
+            echo view('menu', $data);
+            echo view('profile', $data);
+            echo view('footer');
+        } else {
+            return redirect()->to('home/login');
+        }
+    }
+    public function editfoto()
+{
+    $model = new M_pencatatan(); // Make sure this model handles updates to tb_user
+    $this->log_activity('Mengedit Foto');
+    
+    // Get current user data
+    $userId = session()->get('id_user'); // Correct the session key
+    $userData = $model->getById($userId); // Ensure this retrieves the correct user data
+
+    // Check if a file was uploaded
+    if ($file = $this->request->getFile('foto')) {
+        if ($file->isValid() && !$file->hasMoved()) {
+            $newFileName = $file->getRandomName();
+            $file->move(ROOTPATH . 'public/images/img/', $newFileName); // Save file to the file system
+            
+            // If the user already has a profile photo, delete the old one
+            if ($userData->foto && file_exists(ROOTPATH . 'public/images/img/' . $userData->foto)) {
+                unlink(ROOTPATH . 'public/images/img/' . $userData->foto);
+            }
+            
+            // Update the database with the new file name
+            $userDataUpdate = ['foto' => $newFileName];
+            $model->edit('tb_user', $userDataUpdate, ['id_user' => $userId]);
+        }
+    }
+
+    return redirect()->to('home/profile');
+}
+
+
+    public function aksi_e_profile()
+    {
+        if (session()->get('id_level') > 0) {
+            $model = new M_pencatatan();
+            $this->log_activity('Mengedit Profile');
+            $yoga = $this->request->getPost('username');
+            $yoga1 = $this->request->getPost('email');
+            $id = $this->request->getPost('id');
+
+            $where = array('id_user' => $id); // Jika id_user adalah kunci utama untuk menentukan record
+
+
+            $isi = array(
+                'username' => $yoga,
+                'email' => $yoga1,
+            );
+
+            $model->edit('tb_user', $isi, $where);
+            return redirect()->to('home/profile');
+            // print_r($yoga);
+            // print_r($id);
+        } else {
+            return redirect()->to('home/login');
+        }
+    }
+    public function changepassword()
+    {
+        if (session()->get('id_level') > 0) {
+
+            $model = new M_pencatatan();
+            $this->log_activity('Mengubah Password');
+    
+            $where = array('id_user' => session()->get('id'));
+            $data['darren'] = $model->getwhere('tb_user', $where);
+            helper('permission'); // Pastikan helper dimuat
+
+            echo view('header', $data);
+            echo view('changepassword', $data);
+            echo view('footer');
+        } else {
+            return redirect()->to('home/login');
+        }
+    }
+    public function aksi_changepass()
+    {
+        $model = new M_pencatatan();
+        $oldPassword = $this->request->getPost('old');
+        $newPassword = $this->request->getPost('new');
+        $userId = session()->get('id_level');
+
+        // Dapatkan password lama dari database
+        $currentPassword = $model->getPassword($userId);
+
+        // Verifikasi apakah password lama cocok
+        if (md5($oldPassword) !== $currentPassword) {
+            // Set pesan error jika password lama salah
+            session()->setFlashdata('error', 'Password lama tidak valid.');
+            return redirect()->back()->withInput();
+        }
+
+        // Update password baru
+        $data = [
+            'password' => md5($newPassword),
+            'update_by' => $userId,
+            'update_at' => date('Y-m-d H:i:s')
+        ];
+        $where = ['id_user' => $userId];
+
+        $model->edit('tb_user', $data, $where);
+
+        // Set pesan sukses
+        session()->setFlashdata('success', 'Password berhasil diperbarui.');
+        return redirect()->to('home/changepassword');
+    }
 
 	public function kategori()
 	{
@@ -1246,57 +1360,222 @@ public function hapus_kategori($id){
 
 
 
-	public function laporan()
-	{
-		if (session()->get('id_level')>0) {
-			$model = new M_pencatatan();
-			$this->log_activity('User membuka view Laporan');
-			$where = array('id_setting' => 1);
-		$data['setting'] = $model->getWhere('tb_setting',$where);
+// public function laporan()
+// {
+//     if (session()->get('id_level') > 0) {
+//         $model = new M_pencatatan();
+//         $this->log_activity('User membuka view Laporan');
+        
+//         // Retrieve settings and categories for the view
+//         $where = array('id_setting' => 1);
+//         $data['setting'] = $model->getWhere('tb_setting', $where);
+//         $data['kategoris'] = $model->getAll('tb_kategori');
 
-		$data['kategoris'] = $model->getAll('tb_kategori');
-		
-		echo view ('header',$data);
-		echo view ('menu',$data);
-		echo view('laporan');
-		echo view('footer');
-	}else{
-		return redirect()->to('home/login');
-	}
-	}
+//         // Initialize variables for form inputs
+//         $tanggalawal = $this->request->getPost('tanggalawal');
+//         $tanggalakhir = $this->request->getPost('tanggalakhir');
+//         $status = $this->request->getPost('status');
 
-	// public function print_pemasukan()
-	// 	{
-	// 		if (session()->get('id_level')>0) {
-	// 				$tanggalawal = $this->request->getpost('tanggalawal1');
-	// 				$tanggalakhir = $this->request->getpost('tanggalakhir1');
-			
-	// 				$model = new M_pencatatan();
-	// 				$data = [
-	// 					'erwin' => $model->betweenjoin1(
-	// 						'tb_pencatatan_truck_crane', 'tb_truck_crane', 'tb_supir',
-	// 						'tb_pencatatan_truck_crane.id_truck_crane=tb_truck_crane.id_truck_crane', 
-	// 						'tb_pencatatan_truck_crane.id_supir=tb_supir.id_supir', 
-	// 						$tanggalawal, 
-	// 						$tanggalakhir
-	// 					),
-	// 					'tanggalawal1' => $tanggalawal,
-	// 					'tanggalakhir1' => $tanggalakhir,
-	// 				];
-				
-	// 			return view('print_pemasukan', $data);
-	// 				// print_r($data);
-	// 		} else {
-	// 			return redirect()->to('Home/login');
-	// 		}
-	// 	}
+//         // Perform the filtering if input is provided
+//         if ($tanggalawal && $tanggalakhir && $status) {
+//             $data['erwin'] = $model->betweenjoin1(
+//                 'tb_pencatatan_truck_crane', 
+//                 'tb_truck_crane', 
+//                 'tb_supir',
+//                 'tb_pencatatan_truck_crane.id_truck_crane=tb_truck_crane.id_truck_crane', 
+//                 'tb_pencatatan_truck_crane.id_supir=tb_supir.id_supir', 
+//                 $tanggalawal, 
+//                 $tanggalakhir,
+//                 $status // Pass the status to the model
+//             );
+//         }
+
+//         // Pass the form inputs back to the view for maintaining form state
+//         $data['tanggalawal'] = $tanggalawal;
+//         $data['tanggalakhir'] = $tanggalakhir;
+//         $data['status'] = $status;
+
+//         // Load the views
+//         echo view('header', $data);
+//         echo view('menu', $data);
+//         echo view('laporan', $data);
+//         echo view('footer');
+//     } else {
+//         return redirect()->to('home/login');
+//     }
+// }
+
+public function laporan()
+{
+    if (session()->get('id_level') > 0) {
+        $model = new M_pencatatan();
+        $this->log_activity('User membuka view Laporan');
+        $where = array('id_setting' => 1);
+        $data['setting'] = $model->getWhere('tb_setting', $where);
+        $data['kategoris'] = $model->getAll('tb_kategori');
+
+        // Panggil fungsi filterByDate
+        $data = $this->filterByDate();
+
+        echo view('header', $data);
+        echo view('menu', $data);
+        echo view('laporan', $data);
+        echo view('footer');
+    } else {
+        return redirect()->to('home/login');
+    }
+}
+
+public function filterByDate()
+{
+    if (session()->get('id_level') > 0) {
+        $model = new M_pencatatan();
+
+        // Ambil input form
+        $tanggalawal = $this->request->getPost('tanggalawal');
+        $tanggalakhir = $this->request->getPost('tanggalakhir');
+        $status = $this->request->getPost('status');
+
+        // Jika tanggal awal dan tanggal akhir tidak diisi, ambil semua data
+        if (!$tanggalawal || !$tanggalakhir) {
+            $data['erwin'] = $model->betweenjoin1(
+                'tb_pencatatan_truck_crane',
+                'tb_truck_crane',
+                'tb_supir',
+                'tb_pencatatan_truck_crane.id_truck_crane=tb_truck_crane.id_truck_crane',
+                'tb_pencatatan_truck_crane.id_supir=tb_supir.id_supir'
+            );
+        } else {
+            // Ambil data yang telah difilter berdasarkan tanggal dan status
+            $data['erwin'] = $model->betweenjoin1(
+                'tb_pencatatan_truck_crane',
+                'tb_truck_crane',
+                'tb_supir',
+                'tb_pencatatan_truck_crane.id_truck_crane=tb_truck_crane.id_truck_crane',
+                'tb_pencatatan_truck_crane.id_supir=tb_supir.id_supir',
+                $tanggalawal,
+                $tanggalakhir,
+                $status
+            );
+        }
+
+        // Kembalikan nilai tanggal dan status ke view
+        $data['tanggalawal'] = $tanggalawal;
+        $data['tanggalakhir'] = $tanggalakhir;
+        $data['status'] = $status;
+
+        return $data;
+    } else {
+        return redirect()->to('home/login');
+    }
+}
+
+
+public function laporan_pengeluaran()
+{
+    if (session()->get('id_level') > 0) {
+        $model = new M_pencatatan();
+        $this->log_activity('User membuka view Laporan Pengeluaran');
+        $where = array('id_setting' => 1);
+        $data['setting'] = $model->getWhere('tb_setting', $where);
+        $data['kategoris'] = $model->getAll('tb_kategori');
+
+        // Panggil fungsi filterByDatePengeluaran dan simpan hasilnya ke variabel data
+        $filteredData = $this->filterByDatePengeluaran();
+
+        // Gabungkan hasil filter dengan data setting dan kategoris
+        $data = array_merge($data, $filteredData);
+
+        echo view('header', $data);
+        echo view('menu', $data);
+        echo view('laporan_pengeluaran', $data);
+        echo view('footer');
+    } else {
+        return redirect()->to('home/login');
+    }
+}
+
+
+public function filterByDatePengeluaran()
+{
+    if (session()->get('id_level') > 0) {
+        $model = new M_pencatatan();
+
+        // Ambil input form
+        $tanggalawal = $this->request->getPost('tanggalawal2');
+        $tanggalakhir = $this->request->getPost('tanggalakhir2');
+        $kategori = $this->request->getPost('kategori2');
+
+        // Jika tanggal awal dan tanggal akhir tidak diisi, ambil semua data
+        if (!$tanggalawal || !$tanggalakhir) {
+            $data['erwin'] = $model->betweenjoin2(
+                'tb_pencatatan_pengeluaran_tc', 'tb_truck_crane', 'tb_supir', 'tb_kategori',
+                'tb_pencatatan_pengeluaran_tc.id_truck_crane=tb_truck_crane.id_truck_crane', 
+                'tb_pencatatan_pengeluaran_tc.id_supir=tb_supir.id_supir', 
+                'tb_pencatatan_pengeluaran_tc.id_kategori=tb_kategori.id_kategori'
+            );
+        } else {
+            // Ambil data yang telah difilter berdasarkan tanggal dan status
+            $data['erwin'] = $model->betweenjoin2(
+                'tb_pencatatan_pengeluaran_tc', 'tb_truck_crane', 'tb_supir', 'tb_kategori',
+                'tb_pencatatan_pengeluaran_tc.id_truck_crane=tb_truck_crane.id_truck_crane', 
+                'tb_pencatatan_pengeluaran_tc.id_supir=tb_supir.id_supir', 
+                'tb_pencatatan_pengeluaran_tc.id_kategori=tb_kategori.id_kategori',
+                $tanggalawal, 
+                $tanggalakhir,
+                $kategori // Pass the selected category
+            );
+        }
+
+        // Kembalikan nilai tanggal dan status ke view
+        $data['tanggalawal2'] = $tanggalawal;
+        $data['tanggalakhir2'] = $tanggalakhir;
+        $data['status2'] = $kategori;
+
+        return $data;
+    } else {
+        return redirect()->to('home/login');
+    }
+}
+
+public function filter_pengeluaran()
+{
+    // Load model
+    $this->load->model('Pengeluaran_model');
+
+    // Get the filter inputs
+    $tanggalawal = $this->input->post('tanggalawal2');
+    $tanggalakhir = $this->input->post('tanggalakhir2');
+    $kategori = $this->input->post('kategori2');
+
+	$model = new M_pencatatan();
+        $data = [
+            'erwin' => $model->betweenjoin2(
+                'tb_pencatatan_pengeluaran_tc', 'tb_truck_crane', 'tb_supir', 'tb_kategori',
+                'tb_pencatatan_pengeluaran_tc.id_truck_crane=tb_truck_crane.id_truck_crane', 
+                'tb_pencatatan_pengeluaran_tc.id_supir=tb_supir.id_supir', 
+                'tb_pencatatan_pengeluaran_tc.id_kategori=tb_kategori.id_kategori',
+                $tanggalawal, 
+                $tanggalakhir,
+                $kategori // Pass the selected category
+            ),
+            'tanggalawal' => $tanggalawal,
+            'tanggalakhir' => $tanggalakhir,
+        ];
+
+    // Call the model method to filter data
+    $data['erwin'] = $this->Pengeluaran_model->get_filtered_pengeluaran($tanggalawal, $tanggalakhir, $kategori);
+
+    // Load the view with the filtered data
+    $this->load->view('laporan_pengeluaran', $data);
+}
 
 	public function print_pemasukan()
 {
     if (session()->get('id_level') > 0) {
-        $tanggalawal = $this->request->getpost('tanggalawal1');
-        $tanggalakhir = $this->request->getpost('tanggalakhir1');
-        $status = $this->request->getpost('status1');
+        $tanggalawal = $this->request->getpost('tanggalawal');
+        $tanggalakhir = $this->request->getpost('tanggalakhir');
+        $status = $this->request->getpost('status');
 
 		$this->log_activity('User melakukan Window Print Pencatatan Pemasukan');
 
@@ -1310,8 +1589,8 @@ public function hapus_kategori($id){
                 $tanggalakhir,
                 $status // Pass the status to the model
             ),
-            'tanggalawal1' => $tanggalawal,
-            'tanggalakhir1' => $tanggalakhir,
+            'tanggalawal' => $tanggalawal,
+            'tanggalakhir' => $tanggalakhir,
         ];
     
         return view('print_pemasukan', $data);
@@ -1319,6 +1598,38 @@ public function hapus_kategori($id){
         return redirect()->to('Home/login');
     }
 }
+
+public function filter_pemasukan()
+{
+    // Load model
+    $this->load->model('Pemasukan_model');
+
+    // Get the filter inputs
+    $tanggalawal = $this->input->post('tanggalawal');
+    $tanggalakhir = $this->input->post('tanggalakhir');
+    $status = $this->input->post('status');
+
+	$model = new M_pencatatan();
+        $data = [
+            'erwin' => $model->betweenjoin1(
+                'tb_pencatatan_truck_crane', 'tb_truck_crane', 'tb_supir',
+                'tb_pencatatan_truck_crane.id_truck_crane=tb_truck_crane.id_truck_crane', 
+                'tb_pencatatan_truck_crane.id_supir=tb_supir.id_supir', 
+                $tanggalawal, 
+                $tanggalakhir,
+                $status // Pass the status to the model
+            ),
+            'tanggalawal' => $tanggalawal,
+            'tanggalakhir' => $tanggalakhir,
+        ];
+
+    // Call the model method to filter data
+    $data['erwin'] = $this->Pemasukan_model->get_filtered_pemasukan($tanggalawal, $tanggalakhir, $status);
+
+    // Load the view with the filtered data
+    $this->load->view('laporan', $data);
+}
+
 
 
 		// public function print_pengeluaran()
@@ -1380,9 +1691,9 @@ public function hapus_kategori($id){
 public function print_pengeluaran()
 {
     if (session()->get('id_level') > 0) {
-        $tanggalawal = $this->request->getPost('tanggalawal4');
-        $tanggalakhir = $this->request->getPost('tanggalakhir4');
-        $kategori = $this->request->getPost('kategori4');
+        $tanggalawal = $this->request->getPost('tanggalawal2');
+        $tanggalakhir = $this->request->getPost('tanggalakhir2');
+        $kategori = $this->request->getPost('kategori2');
 
 		$this->log_activity('User melakukan Window Print Pencatatan Pengeluaran');
 
@@ -1397,8 +1708,8 @@ public function print_pengeluaran()
                 $tanggalakhir,
                 $kategori // Pass the selected category
             ),
-            'tanggalawal4' => $tanggalawal,
-            'tanggalakhir4' => $tanggalakhir,
+            'tanggalawal2' => $tanggalawal,
+            'tanggalakhir2' => $tanggalakhir,
         ];
 
         return view('print_pengeluaran', $data);
@@ -1411,9 +1722,9 @@ public function print_pengeluaran()
 public function print_pemasukan_pdf()
 {
     if (session()->get('id_level') > 0) {
-        $tanggalawal = $this->request->getPost('tanggalawal2');
-        $tanggalakhir = $this->request->getPost('tanggalakhir2');
-        $status = $this->request->getPost('status2');
+        $tanggalawal = $this->request->getPost('tanggalawal');
+        $tanggalakhir = $this->request->getPost('tanggalakhir');
+        $status = $this->request->getPost('status');
 
 		$this->log_activity('User melakukan Print Pencatatan Pemasukan PDF');
 
@@ -1427,8 +1738,8 @@ public function print_pemasukan_pdf()
                 $tanggalakhir,
                 $status // Pass the status to the model
             ),
-            'tanggalawal2' => $tanggalawal,
-            'tanggalakhir2' => $tanggalakhir,
+            'tanggalawal' => $tanggalawal,
+            'tanggalakhir' => $tanggalakhir,
         ];
 
         // Load view content for PDF generation
@@ -1482,9 +1793,9 @@ public function print_pemasukan_pdf()
 public function print_pengeluaran_pdf()
 {
     if (session()->get('id_level') > 0) {
-        $tanggalawal = $this->request->getPost('tanggalawal5');
-        $tanggalakhir = $this->request->getPost('tanggalakhir5');
-		$kategori = $this->request->getPost('kategori5');
+        $tanggalawal = $this->request->getPost('tanggalawal2');
+        $tanggalakhir = $this->request->getPost('tanggalakhir2');
+		$kategori = $this->request->getPost('kategori2');
 
 		$this->log_activity('User melakukan Print Pencatatan Pengeluaran PDF');
 
@@ -1499,8 +1810,8 @@ public function print_pengeluaran_pdf()
                 $tanggalakhir,
 				$kategori // Pass the selected category
             ),
-            'tanggalawal5' => $tanggalawal,
-            'tanggalakhir5' => $tanggalakhir,
+            'tanggalawal2' => $tanggalawal,
+            'tanggalakhir2' => $tanggalakhir,
         ];
 
         // Load view content for PDF generation
@@ -1640,9 +1951,9 @@ public function print_pengeluaran_pdf()
 public function print_pemasukan_excel()
 {
     if (session()->get('id_level') > 0) {
-        $tanggalawal = $this->request->getPost('tanggalawal3');
-        $tanggalakhir = $this->request->getPost('tanggalakhir3');
-        $status = $this->request->getPost('status3');
+        $tanggalawal = $this->request->getPost('tanggalawal');
+        $tanggalakhir = $this->request->getPost('tanggalakhir');
+        $status = $this->request->getPost('status');
 
 		$this->log_activity('User melakukan Print Pencatatan Pemasukan Excel');
 
@@ -1732,9 +2043,9 @@ public function print_pemasukan_excel()
 	public function print_pengeluaran_excel()
     {
         if (session()->get('id_level') > 0) {
-            $tanggalawal = $this->request->getPost('tanggalawal6');
-            $tanggalakhir = $this->request->getPost('tanggalakhir6');
-			$kategori = $this->request->getPost('kategori6');
+            $tanggalawal = $this->request->getPost('tanggalawal2');
+            $tanggalakhir = $this->request->getPost('tanggalakhir2');
+			$kategori = $this->request->getPost('kategori2');
 
 			$this->log_activity('User melakukan Print Pencatatan Pengeluaran Excel');
 
@@ -1821,13 +2132,35 @@ public function print_pemasukan_excel()
     {
 		$model = new M_pencatatan();
         $data = [
-            'id_user'    => session()->get('id'),
+            'id_user'    => session()->get('id_user'),
             'activity'   => $activity,
 			'timestamp' => date('Y-m-d H:i:s'),
 			'delete_at' => '0'
         ];
 
-        $model->tambah('activity', $data);
+        $model->tambah('tb_activity', $data);
 	}
+
+    public function activity()
+    {
+        if (session()->get('id_level')>0) {
+            $model = new M_pencatatan();
+            $where=array('id_user'=>session()->get('id_user'));
+            $data['user']=$model->getWhere('tb_user', $where);
+            $where = array('id_setting' => 1);
+            $data['setting'] = $model->getWhere('tb_setting',$where);
+            $this->log_activity('User membuka Log Activity');
+            $data['erwin'] = $model->join('tb_activity', 'tb_user',
+            'tb_activity.id_user = tb_user.id_user',$where);
+
+        echo view('header' ,$data);
+		echo view('menu',$data);
+		echo view('activity',$data);
+		echo view('footer');
+	
+		}else{
+			return redirect()->to('home/login');
+		}
+        }
 
 }
