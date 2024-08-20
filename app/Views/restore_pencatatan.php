@@ -130,6 +130,10 @@
                                                         <button class="btn btn-danger">Restore Data</button>
                                                     </a>
 
+                                                    <a href="<?= base_url('Home/hapus_pencatatan_permanen/'.$wkwk->id_pencatatan)?>">
+                                                        <button class="btn btn-danger">Hapus Data</button>
+                                                    </a>
+
                                                 <?php } ?>
                                             </td>
                                         </tr>

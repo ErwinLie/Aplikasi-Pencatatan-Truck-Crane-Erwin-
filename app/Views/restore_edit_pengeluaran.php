@@ -101,13 +101,9 @@
 >Detail</button> -->
 
 
-        <a href="<?= base_url('Home/hapus_restore_pengeluaran/'.$wkwk->id_pengeluaran_tc)?>">
-            <button class="btn btn-danger">Restore Data</button>
-        </a>
-
-        <a href="<?= base_url('Home/hapus_pengeluaran_permanen/'.$wkwk->id_pengeluaran_tc)?>">
-            <button class="btn btn-danger">Hapus Data</button>
-        </a>
+                                                    <a href="<?= base_url('Home/restore_data_edit_pengeluaran/'.$wkwk->id_pengeluaran_tc)?>">
+                                                        <button class="btn btn-danger">Restore Edit Data</button>
+                                                    </a>
     <?php } ?>
 </td>
 

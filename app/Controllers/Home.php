@@ -14,23 +14,57 @@ date_default_timezone_set('Asia/Jakarta');
 class Home extends BaseController
 {
 	public function dashboard()
-	{
-		if (session()->get('id_level')>0) {
-		$model = new M_pencatatan();
-		$where=array('id_user'=>session()->get('id_user'));
-        $data['user']=$model->getWhere('tb_user', $where);
-		$where = array('id_setting' => 1);
-		$data['setting'] = $model->getWhere('tb_setting',$where);
-		$this->log_activity('User membuka Dashboard');
-		echo view('header',$data);
-		echo view('menu',$data);
-		echo view('dashboard');
-		echo view('footer');
-	
-		}else{
-			return redirect()->to('home/login');
-		}
-	}
+{
+    if (session()->get('id_level') > 0) {
+        $model = new M_pencatatan();
+        
+        // Fetch user data
+        $where = array('id_user' => session()->get('id_user'));
+        $data['user'] = $model->getWhere('tb_user', $where);
+
+        // Fetch setting data
+        $where = array('id_setting' => 1);
+        $data['setting'] = $model->getWhere('tb_setting', $where);
+        
+        // Calculate total pemasukan
+        $data['totalPemasukan'] = $model->getTotalPemasukan(); // You need this method in your model as shown earlier
+
+        $data['totalPengeluaran'] = $model->getTotalPengeluaran(); // Add this line
+
+        // Calculate saldo
+        $data['saldo'] = $data['totalPemasukan'] - $data['totalPengeluaran']; // Add this line
+
+
+        // Log activity
+        $this->log_activity('User membuka Dashboard');
+
+        // Load views
+        echo view('header', $data);
+        echo view('menu', $data);
+        echo view('dashboard', $data); // Pass the data to the dashboard view
+        echo view('footer');
+    } else {
+        return redirect()->to('home/login');
+    }
+}
+
+public function pemasukanByDateRange()
+    {
+        $startDate = $this->request->getGet('startDate');
+        $endDate = $this->request->getGet('endDate');
+
+        $pemasukanModel = new PemasukanModel();
+        $totalPemasukan = $pemasukanModel->getTotalPemasukanByDateRange($startDate, $endDate);
+
+        // Pass data to the view
+        return view('dashboard_view', [
+            'totalPemasukan' => $totalPemasukan,
+        ]);
+    }
+
+
+
+
 
 	public function login()
 	{
@@ -468,6 +502,14 @@ public function restore_edit_pencatatan()
     return redirect()->to('home/pencatatan')->with('error', 'Gagal memulihkan data.');
 }
 
+public function hapus_pencatatan_permanen($id){
+    $model = new M_pencatatan();
+    $this->log_activity('User melakukan Penghapusan Data Pencatatan Pemasukan Permanen');
+    $where = array('id_pencatatan'=>$id);
+    $model->hapus('tb_pencatatan_truck_crane',$where);
+    
+    return redirect()->to('Home/pencatatan');
+}
 
 	public function hapus_pencatatan($id){
 		$model = new M_pencatatan();
@@ -631,6 +673,42 @@ public function restore_edit_pencatatan()
 		}
 	}
 
+    public function restore_edit_pengeluaran()
+{
+    if (session()->get('id_level') > 0) {
+        $model = new M_pencatatan();
+		$this->log_activity('User Membuka Restore Edit Pencatatan Pengeluaran');
+		$where = array('id_setting' => 1);
+		$data['setting'] = $model->getWhere('tb_setting',$where);
+        $where = ['id_user' => session()->get('id_user')];
+        $data['erwin'] = $model->joinFourPengeluaran('tb_pencatatan_pengeluaran_tc_backup','tb_truck_crane','tb_supir','tb_kategori',
+		'tb_pencatatan_pengeluaran_tc_backup.id_truck_crane = tb_truck_crane.id_truck_crane',
+		'tb_pencatatan_pengeluaran_tc_backup.id_supir = tb_supir.id_supir',
+		'tb_pencatatan_pengeluaran_tc_backup.id_kategori = tb_kategori.id_kategori', $where);
+
+        // Fetch data for dropdowns
+        $data['truck_cranes'] = $model->getAll('tb_truck_crane');
+        $data['supirs'] = $model->getAll('tb_supir');
+        $data['kategoris'] = $model->getAll('tb_kategori');
+
+        echo view('header', $data);
+        echo view('menu', $data);
+        echo view('restore_edit_pengeluaran', $data);
+        echo view('footer');
+    } else {
+        return redirect()->to('home/login');
+    }
+}
+
+public function hapus_pengeluaran_permanen($id){
+    $model = new M_pencatatan();
+    $this->log_activity('User melakukan Penghapusan Data Pencatatan Pengeluaran Permanen');
+    $where = array('id_pengeluaran_tc'=>$id);
+    $model->hapus('tb_pencatatan_pengeluaran_tc',$where);
+    
+    return redirect()->to('Home/pencatatan_pengeluaran');
+}
+
     public function hapus_pengeluaran($id){
 		$model = new M_pencatatan();
 		$this->log_activity('User melakukan Penghapusan Data Pencatatan Pengeluaran');
@@ -640,7 +718,7 @@ public function restore_edit_pencatatan()
             'delete_at' => date('Y-m-d H:i:s'),
 );
 
-		$model->hapus('tb_pencatatan_pengeluaran_tc',$where);
+		$model->edit('tb_pencatatan_pengeluaran_tc',$isi,$where);
 		
 		return redirect()->to('Home/pencatatan_pengeluaran');
 	}
@@ -766,27 +844,6 @@ public function restore_edit_pencatatan()
 
 	}
 
-	// public function aksi_e_pengeluaran()
-// {
-//     $model = new M_pencatatan();
-//     $this->log_activity('User melakukan Pengeditan Data Pencatatan Pengeluaran');
-
-//     $data = [
-//         'id_supir' => $this->request->getPost('supir'),
-//         'id_truck_crane' => $this->request->getPost('truck_crane'),
-//         'tanggal' => $this->request->getPost('tanggal'),
-//         'deskripsi' => $this->request->getPost('deskripsi'),
-//         'harga' => $this->request->getPost('harga'),
-//         'id_kategori' => $this->request->getPost('kategori'),
-//     ];
-//     $id_pengeluaran_tc = $this->request->getPost('id_pengeluaran_tc');
-
-//     $model->edit('tb_pencatatan_pengeluaran_tc', $data, ['id_pengeluaran_tc' => $id_pengeluaran_tc]);
-
-//     return redirect()->to('home/pencatatan_pengeluaran');
-// }
-
-
 public function aksi_e_pengeluaran()
 	{
 		$model = new M_pencatatan();
@@ -800,8 +857,41 @@ public function aksi_e_pengeluaran()
 		$e = $this->request->getPost('harga');
 		$f = $this->request->getPost('kategori');
 		$id_pengeluaran_tc = $this->request->getPost('id_pengeluaran_tc');
-		
+        $id_user = session()->get('id_user');
 		$where = array('id_pengeluaran_tc'=>$id_pengeluaran_tc);
+		
+        $oldData = $model->getWhere('tb_pencatatan_pengeluaran_tc', ['id_pengeluaran_tc' => $id_pengeluaran_tc]);
+
+        // Simpan data lama ke tabel backup
+        if ($oldData) {
+            $backupData = [
+                'id_pengeluaran_tc' => $oldData->id_pengeluaran_tc,  // integer
+                'id_supir' => $oldData->id_supir,  // integer
+                'id_truck_crane' => $oldData->id_truck_crane,             // integer
+                'tanggal' => $oldData->tanggal,     // integer
+                'deskripsi' => $oldData->deskripsi, // integer
+                'harga' => $oldData->harga,               // enum
+                'id_kategori' => $oldData->id_kategori,                 // varchar(255)
+                                   // integer
+                'create_by' => $oldData->create_by,         // integer
+                'update_by' => $oldData->update_by,         // integer
+                'create_at' => $oldData->create_at,         // datetime
+                'update_at' => $oldData->update_at,         // datetime
+                'backup_at' => date('Y-m-d H:i:s'),         // datetime (current time)
+                'backup_by' => $id_user,                   // integer (user who made the backup)
+                // 'kode_pemesanan' => $oldData->kode_pemesanan,
+            ];
+
+            // Debug: cek hasil insert ke tabel backup
+            if ($model->saveToBackup('tb_pencatatan_pengeluaran_tc_backup', $backupData)) {
+                echo "Data backup berhasil disimpan!";
+            } else {
+                echo "Gagal menyimpan data ke backup.";
+            }
+        } else {
+            echo "Data lama tidak ditemukan.";
+        }
+
 
 		$isi = array(
 
@@ -819,7 +909,40 @@ public function aksi_e_pengeluaran()
 
 	}
 
-
+    public function restore_data_edit_pengeluaran($backup_id)
+    {
+        $model = new M_pencatatan();
+    
+        // Ambil data backup berdasarkan ID
+        $backupData = $model->db->table('tb_pencatatan_pengeluaran_tc_backup')->where('id_pengeluaran_tc', $backup_id)->get()->getRow();
+    
+        if ($backupData) {
+            // Update data di tabel pemesanan dengan data backup
+            $data = [
+                'id_supir' => $backupData->id_supir,
+                'id_truck_crane' => $backupData->id_truck_crane,
+                'tanggal' => $backupData->tanggal,
+                'deskripsi' => $backupData->deskripsi,
+                'harga' => $backupData->harga,
+                'id_kategori' => $backupData->id_kategori,
+                'update_by' => $backupData->backup_by,
+                'update_at' => $backupData->backup_at,
+            ];
+            
+            // Update tabel utama dengan data dari backup
+            $model->db->table('tb_pencatatan_pengeluaran_tc')->where('id_pengeluaran_tc', $backup_id)->update($data);
+            
+            // Hapus data backup setelah restore
+            $model->db->table('tb_pencatatan_pengeluaran_tc_backup')->where('id_pengeluaran_tc', $backup_id)->delete();
+    
+            // Log aktivitas restore
+            $this->log_activity('User Restore Data Pencatatan Pemasukan');
+    
+            return redirect()->to('home/pencatatan_pengeluaran')->with('message', 'Data berhasil dipulihkan dari backup.');
+        }
+    
+        return redirect()->to('home/pencatatan_pengeluaran')->with('error', 'Gagal memulihkan data.');
+    }
 	
 
 	public function supir()

@@ -627,4 +627,40 @@ public function join3tblPencatatan($tabel1, $tabel2, $tabel3, $on1, $on2, $order
     {
         return $this->db->table($table)->where($where)->get();
     }
+
+    protected $table = 'tb_pencatatan_truck_crane';
+
+    public function getTotalPemasukan()
+    {
+        return $this->selectSum('harga')->get()->getRow()->harga;
+    }
+
+    // public function getTotalPengeluaran()
+    // {
+    //     return $this->selectSum('harga')->get()->getRow()->harga;
+    // }
+
+    public function getTotalPengeluaran()
+{
+    return $this->db->table('tb_pencatatan_pengeluaran_tc')
+                    ->selectSum('harga')
+                    ->get()
+                    ->getRow()
+                    ->harga;
+}
+
+    public function getTotalPemasukanByDateRange($startDate, $endDate)
+    {
+        return $this->where('tanggal >=', $startDate)
+                    ->where('tanggal <=', $endDate)
+                    ->selectSum('harga')
+                    ->get()
+                    ->getRow()
+                    ->harga ?? 0; // Use ?? 0 to return 0 if no result found
+    }
+
+    
+    
+
+
 }
